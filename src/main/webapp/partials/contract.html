@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- This is a partial, and is templated by AngularJS -->
+<div>
+    <h1>Taxi Rental Application</h1>
+
+    <div>
+        <p>welcome.</p>
+    </div>
+
+    <!-- Standard HTML form, with the submit function bound to the register() function defined in the the controller -->
+    <form id="reg" ng-submit="register()">
+
+        <fieldset>
+
+            <!-- Each input is bound to a property on the prototype newMember object -->
+            <div>
+                <label for="customer">Customers:</label>
+
+                <select  name = "customer"  type= "number"  id="customer" ng-model="newcontract.customer" placeholder="Your customer" required>
+
+
+                    <option ng-repeat="customer in customers | orderBy:orderBy" value = {{customer.id}}>{{customer.name}}{{customer.driverLicenseID}}</option>
+
+                   </select>
+
+            </div>
+
+
+
+            <div >
+                <label for="taxi">Taxis:</label>
+
+                <select name = "taxi"  type= "number"  id="taxi" ng-model="newcontract.taxi" placeholder="Your taxi" required>
+
+
+                    <option  ng-repeat="taxi in taxis | orderBy:orderBy" value = {{taxi.id}}>{{taxi.taxiname}}{{taxi.carregistrationid}}</option>
+
+                </select>
+            </div>
+
+            <div>
+                <label for="contractDate">Contract Date:</label>
+                <input type="date" name="contractDate" id="contractDate"  ng-model="newcontract.contractDate" placeholder="Your contractDate" required autofocus/>
+                <span class="error" ng-show="errors.contractDate">{{errors.contractDate}}</span>
+            </div>
+
+            <div>
+                <input type="submit" id="register" value="Register" />
+                <input type="button" ng-click="reset()" name="cancel"
+                       id="cancel" value="Cancel" />
+            </div>
+
+            </fieldset>
+    </form>
+    <form id = "del" ng-submit = "delete()">
+
+                <table ng-hide="contracts.length == 0" class="simpletablestyle">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>CustomerName</th>
+                        <th>CustomerDriveID</th>
+                        <th>CarName</th>
+                        <th>CarID</th>
+                        <th>ContractDate</th>
+                        <th>Delete?</th>
+                    </tr>
+                    </thead>
+                    <!-- The table is built using the AngularJS repeat function, iterating over the members variable, and ordering by the property specified in the orderBy variable -->
+                    <tr ng-repeat="contract in contracts | orderBy:orderBy">
+                        <td>{{contract.id}}</td>
+                        <td>{{contract.customer.name}}</td>
+                        <td>{{contract.customer.driverLicenseID}}</td>
+                        <td>{{contract.taxi.taxiname}}</td>
+                        <td>{{contract.taxi.carregistrationid}}</td>
+                        <td>{{contract.contractDate}}</td>
+                        <td >
+                                <input type = radio name = "contract"  value = {{contract.id}} ng-model = "deleteContract.id" placeholder = "Your contract" required>
+                        </td>
+
+                </table>
+             <div>
+                 <input type = "submit" id = "delete" value="Delete" />
+                 <input type="button" ng-click="reset()" name="cancel"
+                        id="cancelDelete" value="Cancel" />
+             </div>
+
+
+    </form>
+
+    <!-- A list of registered members -->
+    <h2>Contracts</h2>
+    <!-- If there are no members registered, instead of showing the table, we show a simple message. -->
+    <em ng-show="contracts.length == 0">No registered contracts.</em>
+    <table ng-hide="contracts.length == 0" class="simpletablestyle">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>CustomerName</th>
+            <th>CustomerDriveID</th>
+            <th>CarName</th>
+            <th>CarID</th>
+            <th>ContractDate</th>
+            <th>REST URL</th>
+        </tr>
+        </thead>
+        <!-- The table is built using the AngularJS repeat function, iterating over the members variable, and ordering by the property specified in the orderBy variable -->
+        <tr ng-repeat="contract in contracts | orderBy:orderBy">
+            <td>{{contract.id}}</td>
+            <td>{{contract.customer.name}}</td>
+            <td>{{contract.customer.driverLicenseID}}</td>
+            <td>{{contract.taxi.taxiname}}</td>
+            <td>{{contract.taxi.carregistrationid}}</td>
+            <td><a href="rest/contracts/{{contract.id}}">/rest/contracts/{{contract.id}}</a>
+            </td>
+    </table>
+    <div>
+        REST URL for all customers: <a href="rest/customers">/rest/customers</a>
+    </div>
+    <div>
+        <!-- The table has a button to manually refresh the values, in case, for example, someone else adds a member -->
+        <input type="button" ng-click="refresh()" name="refresh"
+               id="refresh" value="Refresh" />
+    </div>
+</div>
