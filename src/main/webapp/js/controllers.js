@@ -158,7 +158,7 @@ function MembersCtrl($scope, Customers, Members) {
     // Set the default orderBy to the name property
     $scope.orderBy = 'id';
 }
-function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, flights, Members, Bookings) {
+function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, flights, Members, Bookings, DeleteContracts) {
 
     // Define a refresh function, that updates the data from the REST service
     $scope.refresh = function () {
@@ -168,6 +168,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.Flights = flights.query();
         $scope.members = Members.query();
         $scope.bookings = Bookings.query();
+        $scope.deletecontracts = DeleteContracts.query();
     };
 
     // Define a reset function, that clears the prototype newMember object, and
@@ -199,11 +200,22 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 
     };
 
+
+    $scope.deleteRemoteWhenErrorHappen = function () {
+        $scope.deleteContractForError.customer = $scope.newcontract.customer;
+        $scope.deleteContractForError.taxi = $scope.newcontract.taxi;
+        $scope.deleteContractForError.contractDate = $scope.newcontract.contractDate;
+        DeleteContracts.delete({customerID: $scope.deleteContractForError.customer.id, contractDate: $scope.deleteContractForError.contractDate}, function (data) {
+            $scope.successMessages = ['Contract Delected'];
+        });
+    };
+
+
     $scope.deleteWhenErrorHappen = function () {
         $scope.deleteContractForError.customer = $scope.newcontract.customer;
         $scope.deleteContractForError.taxi = $scope.newcontract.taxi;
         $scope.deleteContractForError.contractDate = $scope.newcontract.contractDate;
-        contracts.delete({personID: $scope.deleteContractForError.customer.id, bookDate: $scope.deleteContractForError.contractDate}, function (data) {
+        DeleteContracts.delete({customerID: $scope.deleteContractForError.customer.id, contractDate: $scope.deleteContractForError.contractDate}, function (data) {
             $scope.successMessages = ['Contract Delected'];
         });
     };
@@ -237,7 +249,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
                         if(data.length == 0){
                            $scope.remoteNewCustomer = $scope.newcontract;
                            $scope.registerRemoteCustomer();
-                            Members.get({memberID: 'check', email: $scope.newcontract.customer.email}, function (data) {
+                            Members.get({memberID: 'a', email: $scope.newcontract.customer.email}, function (data) {
 
                                 $scope.remoteNewContract.member = data;
                                 $scope.localContract.customer = $scope.newcontract.customer;
@@ -249,17 +261,19 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
                                 $scope.registercontract();
                                 $scope.registerRemoteContract();
                             });
+                        } else{
+                            $scope.remoteNewContract.member = data;
+                            $scope.localContract.customer = $scope.newcontract.customer;
+                            $scope.localContract.taxi = $scope.newcontract.taxi;
+                            $scope.localContract.contractDate = $scope.newcontract.contractDate;
+                            console.log($scope.localContract);
+                            console.log($scope.remoteNewContract);
+
+                            $scope.registercontract();
+                            $scope.registerRemoteContract();
                         }
 
-                        $scope.remoteNewContract.member = data;
-                        $scope.localContract.customer = $scope.newcontract.customer;
-                        $scope.localContract.taxi = $scope.newcontract.taxi;
-                        $scope.localContract.contractDate = $scope.newcontract.contractDate;
-                        console.log($scope.localContract);
-                        console.log($scope.remoteNewContract);
 
-                        $scope.registercontract();
-                        $scope.registerRemoteContract();
                     });
 
                 });

@@ -27,6 +27,10 @@ angular.module('contractService', ['ngResource']).
     factory('contracts', function($resource){
         return $resource('rest/contracts/:contractID', {});
     });
+angular.module('contractDeleteService', ['ngResource']).
+    factory('DeleteContracts', function($resource){
+        return $resource('rest/contracts/:contractDate/:customerID', {});
+    });
 angular.module('remoteFlightCustomerService', ['ngResource']).
     factory('Members', function($resource){
         return $resource('http://flightbooking-130254496.rhcloud.com/rest/members/:memberID/:email', {});
@@ -38,5 +42,5 @@ angular.module('remoteFlightQueryService', ['ngResource']).
 
 angular.module('remoteFlightBookingService', ['ngResource']).
     factory('Bookings', function($resource){
-        return $resource('http://flightbooking-130254496.rhcloud.com/rest/books/:bookDate/:personID', {});
+        return $resource('http://flightbooking-130254496.rhcloud.com/rest/books/:flightID/:personID', {});
     });

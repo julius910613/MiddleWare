@@ -39,7 +39,7 @@ public class ContractRepository {
         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
         // feature in JPA 2.0
         // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
-        criteria.select(contract).where(cb.equal(contract.get("customer_id"), customerID), cb.equal(contract.get("contract_date"), dateOfContract));
+        criteria.select(contract).where(cb.and(cb.equal(contract.get("id"), customerID), cb.equal(contract.get("contractDate"), dateOfContract)));
         return em.createQuery(criteria).getSingleResult();
     }
 
