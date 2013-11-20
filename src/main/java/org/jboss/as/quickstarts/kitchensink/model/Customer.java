@@ -1,8 +1,10 @@
 package org.jboss.as.quickstarts.kitchensink.model;
 
-import org.jboss.as.quickstarts.kitchensink.data.CustomerRepository;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -34,25 +36,38 @@ public class Customer implements Serializable {
     private String password;
     @NotNull
     @Size(min = 1, max = 10)
-    private String driverLicenseID;
+    private String personID;
+    @NotNull
+    @NotEmpty
+    @Email
+    private String email;
+
+    @NotNull
+    @Size(min = 10, max = 12)
+    @Digits(fraction = 0, integer = 12)
+    @Column(name = "phone_number")
+    private String phoneNumber;
   //  private Set<contract> contract = new HashSet<contract>();
 
 
-
-    public Customer() {
-
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public Customer(long id) {
-        CustomerRepository customerRepository = new CustomerRepository();
-        Customer c = customerRepository.findById(id);
-        this.id = c.getId();
-        this.name = c.getName();
-        this.password = c.getPassword();
-        this.driverLicenseID = c.getDriverLicenseID();
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
+
         return id;
     }
 
@@ -76,12 +91,12 @@ public class Customer implements Serializable {
 //        this.contract = contract;
 //    }
 
-    public String getDriverLicenseID() {
-        return driverLicenseID;
+    public String getPersonID() {
+        return personID;
     }
 
-    public void setDriverLicenseID(String licenseID) {
-        driverLicenseID = licenseID;
+    public void setPersonID(String licenseID) {
+        personID = licenseID;
     }
 
     public String getPassword() {
@@ -94,7 +109,7 @@ public class Customer implements Serializable {
     @Override
     public boolean equals(Object o){
              Customer customer = (Customer)o;
-        if(customer.getDriverLicenseID().equals(this.getDriverLicenseID())){
+        if(customer.getPersonID().equals(this.getPersonID())){
             return true;
         }
         else{

@@ -36,13 +36,24 @@
             </div>
             <div>
                 <label for="driverLicenseID">DriverLicenseID:</label>
-                <input type="text" name="driverLicenseID" id="driverLicenseID" ng-model="newMember.driverLicenseID" placeholder="Your DriverLicenseID" required/>
+                <input type="text" name="driverLicenseID" id="driverLicenseID" ng-model="newMember.personID" placeholder="Your DriverLicenseID" required/>
                 <span class="error" ng-show="errors.driverLicenseID">{{errors.driverLicenseID}}</span>
             </div>
             <div>
                 <label for="password">password:</label>
                 <input type="password" name="password" id="password" ng-model="newMember.password" placeholder="Your password" required/>
                 <span class="error" ng-show="errors.password">{{errors.password}}</span>
+            </div>
+            <div>
+                 <label for = "email">email:</label>
+                <input type = "email" name = "email" id = "email" ng-model = "newMember.email" placeholder="your email" required/>
+
+            </div>
+
+            <div>
+                <label for = "phoneNumber">phone number:</label>
+                <input type = "number" name = "phoneNumber" id = "phoneNumber" ng-model = "newMember.phoneNumber" placeholder="your phoneNumber" required/>
+
             </div>
             
             <!-- We output a list of success messages (appropriately styled!) for the form. -->
@@ -61,6 +72,8 @@
                 <input type="button" ng-click="reset()" name="cancel"
                     id="cancel" value="Cancel" />
             </div>
+
+
         </fieldset>
     </form>
 

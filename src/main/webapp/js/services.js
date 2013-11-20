@@ -17,7 +17,7 @@
 // Define the REST resource service, allowing us to interact with it as a high level service
 angular.module('customerService', ['ngResource']).
     factory('Customers', function($resource){
-  return $resource('rest/customers/:customerId', {});
+  return $resource('rest/customers/:customerId/:driverLicenceId', {});
 });
 angular.module('taxiService', ['ngResource']).
     factory('Taxis', function($resource){
@@ -27,3 +27,12 @@ angular.module('contractService', ['ngResource']).
     factory('contracts', function($resource){
         return $resource('rest/contracts/:contractID', {});
     });
+angular.module('remoteFlightService', ['ngResource']).
+    factory('members', function($resource){
+        return $resource('http://flightbooking-130254496.rhcloud.com/rest/members/:memberID', {});
+    });
+angular.module('remoteFlightBookingService', ['ngResource']).
+    factory('flights', function($resource){
+        return $resource('http://flightbooking-130254496.rhcloud.com/rest/flights/:flightsID', {});
+    });
+

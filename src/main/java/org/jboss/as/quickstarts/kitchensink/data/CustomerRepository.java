@@ -32,14 +32,25 @@ public class CustomerRepository {
         return em.find(Customer.class, id);
     }
 
-    public Customer findByDriverLisence(String driverlicense) {
+    public Customer findByPersonID(String personID) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Customer> criteria = cb.createQuery(Customer.class);
         Root<Customer> customer = criteria.from(Customer.class);
         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
         // feature in JPA 2.0
         // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
-        criteria.select(customer).where(cb.equal(customer.get("driverLicenseID"), driverlicense));
+        criteria.select(customer).where(cb.equal(customer.get("personID"), personID));
+        return em.createQuery(criteria).getSingleResult();
+    }
+
+    public Customer findByEmail(String email){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = cb.createQuery(Customer.class);
+        Root<Customer> customer = criteria.from(Customer.class);
+        // Swap criteria statements if you would like to try out type-safe criteria queries, a new
+        // feature in JPA 2.0
+        // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
+        criteria.select(customer).where(cb.equal(customer.get("email"), email));
         return em.createQuery(criteria).getSingleResult();
     }
 

@@ -1,8 +1,8 @@
 package org.jboss.as.quickstarts.kitchensink.rest;
 
-import org.jboss.as.quickstarts.kitchensink.data.*;
+import org.jboss.as.quickstarts.kitchensink.data.CustomerRepository;
 import org.jboss.as.quickstarts.kitchensink.model.Customer;
-import org.jboss.as.quickstarts.kitchensink.service.*;
+import org.jboss.as.quickstarts.kitchensink.service.CustomerRegistration;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -41,6 +41,17 @@ public class CustomerResourceRESTService {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> listAllMembers() {
         return repository.findAllOrderedByName();
+    }
+
+    @GET
+    @Path("/{abc}/{emailAddress:[0-9][0-9]*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Customer lookupCustomerByEmailAddress(@PathParam("emailAddress") String driverLicenseID, @PathParam("abc") String aaa) {
+        Customer customer = repository.findByPersonID(driverLicenseID);
+        if (customer == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        return customer;
     }
 
     @GET
@@ -94,6 +105,7 @@ public class CustomerResourceRESTService {
 
         return builder.build();
     }
+
     private void validateCustomer(Customer customer) throws ConstraintViolationException, ValidationException {
         // Create a bean validator and check for issues.
         Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
@@ -103,8 +115,8 @@ public class CustomerResourceRESTService {
         }
 
         // Check the uniqueness of the email address
-        if (driverLisenceAlreadyExists(customer.getDriverLicenseID())) {
-            throw new ValidationException("Unique Driver License ID Violation");
+        if (emailAlreadtExists(customer.getEmail())) {
+            throw new ValidationException("Unique Email Address Violation");
         }
     }
 
@@ -121,10 +133,12 @@ public class CustomerResourceRESTService {
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
     }
 
-    public boolean driverLisenceAlreadyExists(String driverlicense) {
+
+
+    public boolean emailAlreadtExists(String email){
         Customer customer = null;
         try {
-            customer = repository.findByDriverLisence(driverlicense);
+            customer = repository.findByEmail(email);
         } catch (NoResultException e) {
             // ignore
         }

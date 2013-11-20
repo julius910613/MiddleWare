@@ -67,11 +67,12 @@ function TaxisCtrl($scope, $http, Taxis) {
     // Set the default orderBy to the name property
     $scope.orderBy = 'id';
 }
-function MembersCtrl($scope, $http, Customers) {
+function MembersCtrl($scope, Customers, members) {
 
     // Define a refresh function, that updates the data from the REST service
     $scope.refresh = function () {
         $scope.customers = Customers.query();
+        $scope.members = members.query();
     };
 
     // Define a reset function, that clears the prototype newMember object, and
@@ -79,11 +80,18 @@ function MembersCtrl($scope, $http, Customers) {
     $scope.reset = function () {
         // clear input fields
         $scope.newMember = {};
+
     };
+
+    $scope.register = function () {
+
+        $scope.registerCustomer();
+        $scope.registerRemoteCustomer();
+    }
 
     // Define a register function, which adds the member using the REST service,
     // and displays any error messages
-    $scope.register = function () {
+    $scope.registerCustomer = function () {
         $scope.successMessages = '';
         $scope.errorMessages = '';
         $scope.errors = {};
@@ -105,7 +113,35 @@ function MembersCtrl($scope, $http, Customers) {
             } else {
                 $scope.errorMessages = [ 'Unknown  server error' ];
             }
-            $scope.$apply();
+            //$scope.$apply();
+        });
+
+    };
+
+    $scope.registerRemoteCustomer = function () {
+        $scope.successMessages = '';
+        $scope.errorMessages = '';
+        $scope.errors = {};
+
+        members.save($scope.newMember, function (data) {
+
+            // mark success on the registration form
+            $scope.successMessages = [ 'customer Registered' ];
+
+            // Update the list of members
+            $scope.refresh();
+
+            // Clear the form
+            $scope.reset();
+        }, function (result) {
+            if ((result.status == 409) || (result.status == 400)) {
+                $scope.errors = result.data;
+                console.log(result.data);
+            } else {
+                console.log(result.data);
+                $scope.errorMessages = [ 'Unknown  server error' ];
+            }
+            //$scope.$apply();
         });
 
     };
@@ -135,6 +171,8 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
         // clear input fields
         $scope.newcontract = {};
         $scope.deleteContract = {};
+        $scope.addedCustomer = {};
+        $scope.remoteMember = {};
     };
 //
     $scope.delete = function () {
@@ -143,7 +181,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
             $scope.contracts.splice($scope.deleteContract.id, 1);
             contracts.delete({contractID: $scope.deleteContract.id}, function (data) {
 
-            $scope.successMessages = ['Contract Delected'];
+                $scope.successMessages = ['Contract Delected'];
             });
 
 
@@ -180,6 +218,106 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
 
 
         });
+    };
+
+    $scope.registerCustomerAndContract = function () {
+        $scope.addedCustomer.name = $scope.newMember.name;
+        $scope.addedCustomer.password = $scope.newMember.password;
+        $scope.addedCustomer.driverLicenseID = $scope.newMember.driverLicenseID;
+        $scope.remoteMember.name = $scope.newMember.name;
+        $scope.remoteMember.email = $scope.newMember.email;
+        $scope.remoteMember.phoneNumber = $scope.newMember.phoneNumber;
+        $scope.registerCustomer();
+        $scope.registerRemoteCustomer();
+        $scope.newcontract.customer = $scope.addedCustomer;
+        console.log($scope.newcontract.customer);
+        Taxis.get({taxiID: $scope.newcontract.taxi}, function (data) {
+            $scope.newcontract.taxi = data;
+            console.log($scope.newcontract.taxi);
+            $scope.registercontract();
+        });
+    };
+
+
+    $scope.registerRemoteContract = function () {
+        $scope.successMessages = '';
+        $scope.errorMessages = '';
+        $scope.errors = {};
+
+        Customers.save($scope.addedCustomer, function (data) {
+
+            // mark success on the registration form
+            $scope.successMessages = [ 'customer Registered' ];
+
+            // Update the list of members
+            $scope.refresh();
+
+            // Clear the form
+            $scope.reset();
+        }, function (result) {
+            if ((result.status == 409) || (result.status == 400)) {
+                $scope.errors = result.data;
+                console.log(result.data);
+            } else {
+                $scope.errorMessages = [ 'Unknown  server error' ];
+            }
+            $scope.$apply();
+        });
+
+    };
+
+    $scope.registerRemoteCustomer = function () {
+        $scope.successMessages = '';
+        $scope.errorMessages = '';
+        $scope.errors = {};
+
+        members.save($scope.remoteMember, function (data) {
+
+            // mark success on the registration form
+            $scope.successMessages = [ 'customer Registered' ];
+
+            // Update the list of members
+            $scope.refresh();
+
+            // Clear the form
+            $scope.reset();
+        }, function (result) {
+            if ((result.status == 409) || (result.status == 400)) {
+                $scope.errors = result.data;
+                console.log(result.data);
+            } else {
+                $scope.errorMessages = [ 'Unknown  server error' ];
+            }
+            $scope.$apply();
+        });
+
+    };
+
+    $scope.registerNewContract = function () {
+        $scope.successMessages = '';
+        $scope.errorMessages = '';
+        $scope.errors = {};
+
+        contracts.save($scope.newcontract, function (data) {
+
+            // mark success on the registration form
+            $scope.successMessages = [ 'contract Registered' ];
+
+            // Update the list of members
+            $scope.refresh();
+
+            // Clear the form
+            $scope.reset();
+        }, function (result) {
+            if ((result.status == 409) || (result.status == 400)) {
+                $scope.errors = result.data;
+                console.log(result.data);
+            } else {
+                $scope.errorMessages = [ 'Unknown  server error' ];
+            }
+            $scope.$apply();
+        });
+
     };
 
 

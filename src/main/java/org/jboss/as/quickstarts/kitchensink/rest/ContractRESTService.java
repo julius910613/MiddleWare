@@ -57,8 +57,6 @@ public class ContractRESTService {
     }
 
 
-
-
     @GET
     @Path("/{contractID:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
