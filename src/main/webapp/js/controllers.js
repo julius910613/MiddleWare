@@ -67,12 +67,12 @@ function TaxisCtrl($scope, $http, Taxis) {
     // Set the default orderBy to the name property
     $scope.orderBy = 'id';
 }
-function MembersCtrl($scope, Customers, members) {
+function MembersCtrl($scope, Customers, Members) {
 
     // Define a refresh function, that updates the data from the REST service
     $scope.refresh = function () {
         $scope.customers = Customers.query();
-        $scope.members = members.query();
+        $scope.members = Members.query();
     };
 
     // Define a reset function, that clears the prototype newMember object, and
@@ -84,6 +84,7 @@ function MembersCtrl($scope, Customers, members) {
     };
 
     $scope.register = function () {
+        console.log($scope.newMember);
 
         $scope.registerCustomer();
         $scope.registerRemoteCustomer();
@@ -123,7 +124,8 @@ function MembersCtrl($scope, Customers, members) {
         $scope.errorMessages = '';
         $scope.errors = {};
 
-        members.save($scope.newMember, function (data) {
+        Members.save($scope.newMember, function (data) {
+
 
             // mark success on the registration form
             $scope.successMessages = [ 'customer Registered' ];
@@ -138,7 +140,7 @@ function MembersCtrl($scope, Customers, members) {
                 $scope.errors = result.data;
                 console.log(result.data);
             } else {
-                console.log(result.data);
+                console.log(result);
                 $scope.errorMessages = [ 'Unknown  server error' ];
             }
             //$scope.$apply();
@@ -156,13 +158,16 @@ function MembersCtrl($scope, Customers, members) {
     // Set the default orderBy to the name property
     $scope.orderBy = 'id';
 }
-function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
+function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, flights, Members, Bookings) {
 
     // Define a refresh function, that updates the data from the REST service
     $scope.refresh = function () {
         $scope.taxis = Taxis.query();
         $scope.customers = Customers.query();
         $scope.contracts = contracts.query();
+        $scope.Flights = flights.query();
+        $scope.members = Members.query();
+        $scope.bookings = Bookings.query();
     };
 
     // Define a reset function, that clears the prototype newMember object, and
@@ -171,8 +176,12 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
         // clear input fields
         $scope.newcontract = {};
         $scope.deleteContract = {};
-        $scope.addedCustomer = {};
-        $scope.remoteMember = {};
+        $scope.localContract = {};
+        $scope.remoteNewContract = {};
+        $scope.deleteContractForError = {};
+        $scope.deleteRemoteContractForErroe = {};
+        $scope.remoteNewCustomer = {};
+
     };
 //
     $scope.delete = function () {
@@ -188,6 +197,15 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
         });
 
 
+    };
+
+    $scope.deleteWhenErrorHappen = function () {
+        $scope.deleteContractForError.customer = $scope.newcontract.customer;
+        $scope.deleteContractForError.taxi = $scope.newcontract.taxi;
+        $scope.deleteContractForError.contractDate = $scope.newcontract.contractDate;
+        contracts.delete({personID: $scope.deleteContractForError.customer.id, bookDate: $scope.deleteContractForError.contractDate}, function (data) {
+            $scope.successMessages = ['Contract Delected'];
+        });
     };
 
 
@@ -213,29 +231,72 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
             Taxis.get({taxiID: $scope.newcontract.taxi}, function (data) {
                 $scope.newcontract.taxi = data;
                 console.log($scope.newcontract.taxi);
-                $scope.registercontract();
+                flights.get({flightsID: $scope.newcontract.flightID}, function (data) {
+                    $scope.remoteNewContract.flight = data;
+                    Members.get({memberID: 'check', email: $scope.newcontract.customer.email}, function (data) {
+                        if(data.length == 0){
+                           $scope.remoteNewCustomer = $scope.newcontract;
+                           $scope.registerRemoteCustomer();
+                            Members.get({memberID: 'check', email: $scope.newcontract.customer.email}, function (data) {
+
+                                $scope.remoteNewContract.member = data;
+                                $scope.localContract.customer = $scope.newcontract.customer;
+                                $scope.localContract.taxi = $scope.newcontract.taxi;
+                                $scope.localContract.contractDate = $scope.newcontract.contractDate;
+                                console.log($scope.localContract);
+                                console.log($scope.remoteNewContract);
+
+                                $scope.registercontract();
+                                $scope.registerRemoteContract();
+                            });
+                        }
+
+                        $scope.remoteNewContract.member = data;
+                        $scope.localContract.customer = $scope.newcontract.customer;
+                        $scope.localContract.taxi = $scope.newcontract.taxi;
+                        $scope.localContract.contractDate = $scope.newcontract.contractDate;
+                        console.log($scope.localContract);
+                        console.log($scope.remoteNewContract);
+
+                        $scope.registercontract();
+                        $scope.registerRemoteContract();
+                    });
+
+                });
+
             });
 
 
         });
     };
 
-    $scope.registerCustomerAndContract = function () {
-        $scope.addedCustomer.name = $scope.newMember.name;
-        $scope.addedCustomer.password = $scope.newMember.password;
-        $scope.addedCustomer.driverLicenseID = $scope.newMember.driverLicenseID;
-        $scope.remoteMember.name = $scope.newMember.name;
-        $scope.remoteMember.email = $scope.newMember.email;
-        $scope.remoteMember.phoneNumber = $scope.newMember.phoneNumber;
-        $scope.registerCustomer();
-        $scope.registerRemoteCustomer();
-        $scope.newcontract.customer = $scope.addedCustomer;
-        console.log($scope.newcontract.customer);
-        Taxis.get({taxiID: $scope.newcontract.taxi}, function (data) {
-            $scope.newcontract.taxi = data;
-            console.log($scope.newcontract.taxi);
-            $scope.registercontract();
+    $scope.registerRemoteCustomer = function () {
+        $scope.successMessages = '';
+        $scope.errorMessages = '';
+        $scope.errors = {};
+
+        Members.save($scope.remoteNewCustomer, function (data) {
+
+
+            // mark success on the registration form
+            $scope.successMessages = [ 'customer Registered' ];
+
+            // Update the list of members
+            $scope.refresh();
+
+            // Clear the form
+            $scope.reset();
+        }, function (result) {
+            if ((result.status == 409) || (result.status == 400)) {
+                $scope.errors = result.data;
+                console.log(result.data);
+            } else {
+                console.log(result);
+                $scope.errorMessages = [ 'Unknown  server error' ];
+            }
+            //$scope.$apply();
         });
+
     };
 
 
@@ -244,61 +305,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
         $scope.errorMessages = '';
         $scope.errors = {};
 
-        Customers.save($scope.addedCustomer, function (data) {
-
-            // mark success on the registration form
-            $scope.successMessages = [ 'customer Registered' ];
-
-            // Update the list of members
-            $scope.refresh();
-
-            // Clear the form
-            $scope.reset();
-        }, function (result) {
-            if ((result.status == 409) || (result.status == 400)) {
-                $scope.errors = result.data;
-                console.log(result.data);
-            } else {
-                $scope.errorMessages = [ 'Unknown  server error' ];
-            }
-            $scope.$apply();
-        });
-
-    };
-
-    $scope.registerRemoteCustomer = function () {
-        $scope.successMessages = '';
-        $scope.errorMessages = '';
-        $scope.errors = {};
-
-        members.save($scope.remoteMember, function (data) {
-
-            // mark success on the registration form
-            $scope.successMessages = [ 'customer Registered' ];
-
-            // Update the list of members
-            $scope.refresh();
-
-            // Clear the form
-            $scope.reset();
-        }, function (result) {
-            if ((result.status == 409) || (result.status == 400)) {
-                $scope.errors = result.data;
-                console.log(result.data);
-            } else {
-                $scope.errorMessages = [ 'Unknown  server error' ];
-            }
-            $scope.$apply();
-        });
-
-    };
-
-    $scope.registerNewContract = function () {
-        $scope.successMessages = '';
-        $scope.errorMessages = '';
-        $scope.errors = {};
-
-        contracts.save($scope.newcontract, function (data) {
+        Bookings.save($scope.remoteNewContract, function (data) {
 
             // mark success on the registration form
             $scope.successMessages = [ 'contract Registered' ];
@@ -312,8 +319,10 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
             if ((result.status == 409) || (result.status == 400)) {
                 $scope.errors = result.data;
                 console.log(result.data);
+                $scope.deleteWhenErrorHappen;
             } else {
                 $scope.errorMessages = [ 'Unknown  server error' ];
+                $scope.deleteWhenErrorHappen;
             }
             $scope.$apply();
         });
@@ -328,7 +337,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts) {
         $scope.errorMessages = '';
         $scope.errors = {};
 
-        contracts.save($scope.newcontract, function (data) {
+        contracts.save($scope.localContract, function (data) {
 
             // mark success on the registration form
             $scope.successMessages = [ 'contract Registered' ];

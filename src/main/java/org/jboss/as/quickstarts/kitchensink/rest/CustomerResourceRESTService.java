@@ -44,13 +44,15 @@ public class CustomerResourceRESTService {
     }
 
     @GET
-    @Path("/{abc}/{emailAddress:[0-9][0-9]*}")
+    @Path("/{abc}/{emailAddress}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Customer lookupCustomerByEmailAddress(@PathParam("emailAddress") String driverLicenseID, @PathParam("abc") String aaa) {
-        Customer customer = repository.findByPersonID(driverLicenseID);
+    public Customer lookupCustomerByEmailAddress(@PathParam("emailAddress") String email, @PathParam("abc") String aaa) {
+
+            Customer  customer = repository.findByEmail(email);
         if (customer == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+
         return customer;
     }
 

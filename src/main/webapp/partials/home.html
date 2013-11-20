@@ -94,7 +94,7 @@
         <tr ng-repeat="customer in customers | orderBy:orderBy">
             <td>{{customer.id}}</td>
             <td>{{customer.name}}</td>
-            <td>{{customer.driverLicenseID}}</td>
+            <td>{{customer.personID}}</td>
             <td><a href="rest/customers/{{customer.id}}">/rest/customers/{{customer.id}}</a>
             </td>
     </table>

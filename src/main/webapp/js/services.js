@@ -17,7 +17,7 @@
 // Define the REST resource service, allowing us to interact with it as a high level service
 angular.module('customerService', ['ngResource']).
     factory('Customers', function($resource){
-  return $resource('rest/customers/:customerId/:driverLicenceId', {});
+  return $resource('rest/customers/:customerId', {});
 });
 angular.module('taxiService', ['ngResource']).
     factory('Taxis', function($resource){
@@ -27,12 +27,16 @@ angular.module('contractService', ['ngResource']).
     factory('contracts', function($resource){
         return $resource('rest/contracts/:contractID', {});
     });
-angular.module('remoteFlightService', ['ngResource']).
-    factory('members', function($resource){
-        return $resource('http://flightbooking-130254496.rhcloud.com/rest/members/:memberID', {});
+angular.module('remoteFlightCustomerService', ['ngResource']).
+    factory('Members', function($resource){
+        return $resource('http://flightbooking-130254496.rhcloud.com/rest/members/:memberID/:email', {});
     });
-angular.module('remoteFlightBookingService', ['ngResource']).
+angular.module('remoteFlightQueryService', ['ngResource']).
     factory('flights', function($resource){
         return $resource('http://flightbooking-130254496.rhcloud.com/rest/flights/:flightsID', {});
     });
 
+angular.module('remoteFlightBookingService', ['ngResource']).
+    factory('Bookings', function($resource){
+        return $resource('http://flightbooking-130254496.rhcloud.com/rest/books/:bookDate/:personID', {});
+    });

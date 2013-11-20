@@ -19,12 +19,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.as.quickstarts.kitchensink.data.ContractRepository;
-import org.jboss.as.quickstarts.kitchensink.data.TaxiRepository;
 import org.jboss.as.quickstarts.kitchensink.model.Customer;
-import org.jboss.as.quickstarts.kitchensink.model.Taxi;
 import org.jboss.as.quickstarts.kitchensink.model.contract;
 import org.jboss.as.quickstarts.kitchensink.service.ContractRegistration;
-import org.jboss.as.quickstarts.kitchensink.service.TaxiRegistration;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,23 +36,19 @@ import org.jboss.as.quickstarts.kitchensink.service.TaxiRegistration;
 public class ContractRESTService {
 
     @Inject
+    ContractRegistration registration;
+    @Inject
     private Logger log;
-
     @Inject
     private Validator validator;
-
     @Inject
     private ContractRepository repository;
-
-    @Inject
-    ContractRegistration registration;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<contract> listAllMembers() {
         return repository.findAllOrderedByCustomerName();
     }
-
 
     @GET
     @Path("/{contractID:[0-9][0-9]*}")
@@ -68,7 +61,6 @@ public class ContractRESTService {
         return contract;
     }
 
-
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{deleteContractID:[0-9][0-9]*}")
@@ -78,6 +70,24 @@ public class ContractRESTService {
         contract contract = repository.findById(id);
         try{
             registration.delete(contract);
+            builder = Response.ok();
+        } catch(Exception e){
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("", "Wrong");
+            builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
+        }
+
+        return builder.build();
+    }
+
+    @DELETE
+    @Path("/{personID}/{contractDate}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteContractForConnectionError(@PathParam("personID") String customerID, @PathParam("contractDate") String dayOfContract) {
+        Response.ResponseBuilder builder = null;
+        contract contractForDelete = repository.findByContractDate(customerID , dayOfContract);
+        try{
+            registration.delete(contractForDelete);
             builder = Response.ok();
         } catch(Exception e){
             Map<String, String> responseObj = new HashMap<String, String>();
@@ -150,9 +160,9 @@ public class ContractRESTService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
         }
-//        if (customerHasBookedAtSameTime(contract.getCustomer())) {
-//            throw new ValidationException("A customer can not book two cars at the same time");
-//        }
+        if (customerHasBookedAtSameTime(contract.getCustomer().getPersonID(), contract.getContractDate())) {
+            throw new ValidationException("A customer can only make one booking one day");
+        }
 
 
     }
@@ -176,10 +186,10 @@ public class ContractRESTService {
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
     }
 
-    public boolean customerHasBookedAtSameTime(Customer customer) {
+    public boolean customerHasBookedAtSameTime(String customerID, String dateOfContract ) {
         contract contract = null;
         try {
-            contract = repository.findByCustomer(customer);
+            contract = repository.findByContractDate(customerID, dateOfContract);
         } catch (NoResultException e) {
             // ignore
         }

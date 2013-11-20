@@ -35,7 +35,7 @@
                 <select  name = "customer"  type= "number"  id="customer" ng-model="newcontract.customer" placeholder="Your customer" required>
 
 
-                    <option ng-repeat="customer in customers | orderBy:orderBy" value = {{customer.id}}>{{customer.name}}{{customer.driverLicenseID}}</option>
+                    <option ng-repeat="customer in customers | orderBy:orderBy" value = {{customer.id}}>{{customer.name}}{{customer.personID}}</option>
 
                    </select>
 
@@ -44,10 +44,10 @@
             <div>
                 <label for="flight">Flights:</label>
 
-                <select  name = "flight"  type= "flight"  id="flight" ng-model="newflight.id" placeholder="Your flight" required>
+                <select  name = "flight"  type= "flight"  id="flight" ng-model="newcontract.flightID" placeholder="Your flight" required>
 
 
-                    <option ng-repeat="flight in flights | orderBy:orderBy" value = {{flights.id}}>{{customer.name}}{{customer.driverLicenseID}}</option>
+                    <option ng-repeat="flight in Flights | orderBy:orderBy" value = {{flight.id}}>{{flight.flight_no}}{{flight.flight_size}}</option>
 
                 </select>
 
@@ -80,54 +80,7 @@
 
             </fieldset>
     </form>
-    <form id="regcus" ng-submit="registerCustomerAndContract()">
 
-        <fieldset>
-
-            <!-- Each input is bound to a property on the prototype newMember object -->
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" name="name" id="name"  ng-model="newMember.name" placeholder="Your Name" required autofocus/>
-                <span class="error" ng-show="errors.name">{{errors.name}}</span>
-            </div>
-            <div>
-                <label for="driverLicenseID">DriverLicenseID:</label>
-                <input type="text" name="driverLicenseID" id="driverLicenseID" ng-model="newMember.driverLicenseID" placeholder="Your DriverLicenseID" required/>
-                <span class="error" ng-show="errors.driverLicenseID">{{errors.driverLicenseID}}</span>
-            </div>
-            <div>
-                <label for="password">password:</label>
-                <input type="password" name="password" id="password" ng-model="newMember.password" placeholder="Your password" required/>
-                <span class="error" ng-show="errors.password">{{errors.password}}</span>
-            </div>
-            <div>
-                <label for = "email">email:</label>
-                <input type = "email" name = "email" id = "email" ng-model = "newMember.email" placeholder="your email" required/>
-
-            </div>
-
-            <div>
-                <label for = "phoneNumber">phone number:</label>
-                <input type = "number" name = "phoneNumber" id = "phoneNumber" ng-model = "newMember.phoneNumber" placeholder="your phoneNumber" required/>
-
-            </div>
-
-            <!-- We output a list of success messages (appropriately styled!) for the form. -->
-            <ul ng-hide="!successMessages" class="success">
-                <li ng-repeat="message in successMessages">{{message}}</li>
-            </ul>
-
-            <!-- Output the list of error messages if any. -->
-            <ul ng-hide="!errorMessages" class="error">
-                <li ng-repeat="message in errorMessages">{{message}}</li>
-            </ul>
-
-            <!-- There are two buttons, the default submit action (which is bound for the whole form), and a reset button, that clears the form. -->
-            <div>
-                <input type="submit" id="registerCustomerAndContract" value="Register" />
-                <input type="button" ng-click="reset()" name="cancel"
-                       id="cancelCustomer" value="Cancel" />
-            </div>
     <form id = "del" ng-submit = "delete()">
 
                 <table ng-hide="contracts.length == 0" class="simpletablestyle">
