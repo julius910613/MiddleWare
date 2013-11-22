@@ -16,9 +16,9 @@
 --
 
 -- You can use this file to load seed data into the database using SQL statements
-insert into customer (id, name, password, personID, email,phone_number) values (0, 'John Smith', '091320117', '2125551212', '690081332@qq.com', '62812618')
-insert into customer (id, name, password, personID, email,phone_number) values (1, 'Zequn Li', '081340117', '2126651212','692341332@qq.com', '62812458')
-insert into customer (id, name, password, personID, email,phone_number) values (2, 'Xin Wen', '101320711', '2125565465','694561332@qq.com', '62456458')
+insert into customer (id, name, password, personID, email,phone_number) values (0, 'John Smith', '091320117', '2125551212', '690081332@qq.com', '6281261811')
+insert into customer (id, name, password, personID, email,phone_number) values (1, 'Zequn Li', '081340117', '2126651212','692341332@qq.com', '6281245822')
+insert into customer (id, name, password, personID, email,phone_number) values (2, 'Xin Wen', '101320711', '2125565465','694561332@qq.com', '6245645833')
 insert into taxi (id, quanity, taxiname, carregistrationid, prize) values (0, 2, 'Das', '9482222454', 4)
 insert into taxi (id, quanity, taxiname, carregistrationid, prize) values (1, 3, 'BMW', '1234522454', 6)
 insert into contract (id, customer_id, taxi_id, contract_date) values(0, 1, 1, '2012-10-10')

@@ -44,3 +44,17 @@ angular.module('remoteFlightBookingService', ['ngResource']).
     factory('Bookings', function($resource){
         return $resource('http://flightbooking-130254496.rhcloud.com/rest/books/:flightID/:personID', {});
     });
+
+angular.module('remoteHotelCustomerService', ['ngResource']).
+    factory('HotelCustomers', function($resource){
+        return $resource('http://hotelbooking-130254496.rhcloud.com/rest/members/:memberID/:email', {});
+    });
+angular.module('remoteHotelsQueryService', ['ngResource']).
+    factory('Hotels', function($resource){
+        return $resource('http://hotelbooking-130254496.rhcloud.com/rest/flights/:flightsID', {});
+    });
+
+angular.module('remoteHotelBookingService', ['ngResource']).
+    factory('HotelBookings', function($resource){
+        return $resource('http://hotelbooking-130254496.rhcloud.com/rest/books/:flightID/:personID', {});
+    });
