@@ -81,9 +81,9 @@ public class ContractRESTService {
     }
 
     @DELETE
-    @Path("/{personID}/{contractDate}")
+    @Path("/{contractDate}/{personID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteContractForConnectionError(@PathParam("personID") String customerID, @PathParam("contractDate") String dayOfContract) {
+    public Response deleteContractForConnectionError(@PathParam("contractDate") String dayOfContract, @PathParam("personID") Long customerID) {
         Response.ResponseBuilder builder = null;
         contract contractForDelete = repository.findByContractDate(customerID , dayOfContract);
         try{
@@ -160,7 +160,7 @@ public class ContractRESTService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
         }
-        if (customerHasBookedAtSameTime(contract.getCustomer().getPersonID(), contract.getContractDate())) {
+        if (customerHasBookedAtSameTime(contract.getCustomer().getId(), contract.getContractDate())) {
             throw new ValidationException("A customer can only make one booking one day");
         }
 
@@ -186,7 +186,7 @@ public class ContractRESTService {
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
     }
 
-    public boolean customerHasBookedAtSameTime(String customerID, String dateOfContract ) {
+    public boolean customerHasBookedAtSameTime(Long customerID, String dateOfContract ) {
         contract contract = null;
         try {
             contract = repository.findByContractDate(customerID, dateOfContract);

@@ -215,8 +215,12 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.deleteContractForError.customer = $scope.newcontract.customer;
         $scope.deleteContractForError.taxi = $scope.newcontract.taxi;
         $scope.deleteContractForError.contractDate = $scope.newcontract.contractDate;
+        console.log( $scope.deleteContractForError.customer);
         DeleteContracts.delete({customerID: $scope.deleteContractForError.customer.id, contractDate: $scope.deleteContractForError.contractDate}, function (data) {
+            console.log(data);
             $scope.successMessages = ['Contract Delected'];
+        },function(result){
+            console.log(result);
         });
     };
 
@@ -246,6 +250,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
                 flights.get({flightsID: $scope.newcontract.flightID}, function (data) {
                     $scope.remoteNewContract.flight = data;
                     Members.get({memberID: 'check', email: $scope.newcontract.customer.email}, function (data) {
+
                         if(data.length == 0){
                            $scope.remoteNewCustomer = $scope.newcontract;
                            $scope.registerRemoteCustomer();
@@ -260,6 +265,8 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 
                                 $scope.registercontract();
                                 $scope.registerRemoteContract();
+                            },function(result){
+                                console.log(result.status);
                             });
                         } else{
                             $scope.remoteNewContract.member = data;
@@ -282,6 +289,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 
 
         });
+        $scope.reset();
     };
 
     $scope.registerRemoteCustomer = function () {
@@ -291,15 +299,14 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 
         Members.save($scope.remoteNewCustomer, function (data) {
 
-
+            console.log($scope.localContract) ;
             // mark success on the registration form
             $scope.successMessages = [ 'customer Registered' ];
 
             // Update the list of members
             $scope.refresh();
 
-            // Clear the form
-            $scope.reset();
+
         }, function (result) {
             if ((result.status == 409) || (result.status == 400)) {
                 $scope.errors = result.data;
@@ -310,6 +317,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
             }
             //$scope.$apply();
         });
+        // Clear the form
 
     };
 
@@ -320,26 +328,27 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.errors = {};
 
         Bookings.save($scope.remoteNewContract, function (data) {
-
+            console.log($scope.localContract) ;
             // mark success on the registration form
             $scope.successMessages = [ 'contract Registered' ];
 
             // Update the list of members
             $scope.refresh();
 
-            // Clear the form
-            $scope.reset();
         }, function (result) {
             if ((result.status == 409) || (result.status == 400)) {
                 $scope.errors = result.data;
                 console.log(result.data);
-                $scope.deleteWhenErrorHappen;
+                console.log($scope.localContract) ;
+                $scope.deleteWhenErrorHappen();
             } else {
                 $scope.errorMessages = [ 'Unknown  server error' ];
-                $scope.deleteWhenErrorHappen;
+                $scope.deleteWhenErrorHappen();
             }
-            $scope.$apply();
+
         });
+
+
 
     };
 
@@ -352,15 +361,14 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.errors = {};
 
         contracts.save($scope.localContract, function (data) {
-
+            console.log($scope.localContract) ;
             // mark success on the registration form
             $scope.successMessages = [ 'contract Registered' ];
 
             // Update the list of members
             $scope.refresh();
 
-            // Clear the form
-            $scope.reset();
+
         }, function (result) {
             if ((result.status == 409) || (result.status == 400)) {
                 $scope.errors = result.data;
@@ -370,6 +378,7 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
             }
             $scope.$apply();
         });
+        // Clear the form
 
     };
 

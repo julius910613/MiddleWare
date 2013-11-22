@@ -32,14 +32,14 @@ public class ContractRepository {
 
 
 
-    public contract findByContractDate(String customerID, String dateOfContract) {
+    public contract findByContractDate(Long customerID, String dateOfContract) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<contract> criteria = cb.createQuery(contract.class);
         Root<contract> contract = criteria.from(contract.class);
         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
         // feature in JPA 2.0
         // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
-        criteria.select(contract).where(cb.and(cb.equal(contract.get("id"), customerID), cb.equal(contract.get("contractDate"), dateOfContract)));
+        criteria.select(contract).where(cb.and(cb.equal(contract.get("customer").get("id"), customerID), cb.equal(contract.get("contractDate"), dateOfContract)));
         return em.createQuery(criteria).getSingleResult();
     }
 
