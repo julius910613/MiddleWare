@@ -186,7 +186,7 @@ function MembersCtrl($scope, Customers, Members, HotelCustomers) {
     // Set the default orderBy to the name property
     $scope.orderBy = 'id';
 }
-function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, flights, Members, Bookings, DeleteContracts, Hotels, HotelCustomers,HotelBookings) {
+function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, flights, Members, Bookings, DeleteContracts) {
 
     // Define a refresh function, that updates the data from the REST service
     $scope.refresh = function () {
@@ -197,10 +197,6 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.members = Members.query();
         $scope.bookings = Bookings.query();
         $scope.deletecontracts = DeleteContracts.query();
-        $scope.hotelCustomers = HotelCustomers.query();
-        $scope.hotels = Hotels.query();
-        $scope.hotelBookings =  HotelBookings.query();
-
     };
 
     // Define a reset function, that clears the prototype newMember object, and
@@ -214,7 +210,6 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
         $scope.deleteContractForError = {};
         $scope.deleteRemoteContractForErroe = {};
         $scope.remoteNewCustomer = {};
-        $scope.remoteNewHotelContract = {};
 
     };
 //
@@ -283,52 +278,12 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
                 console.log($scope.newcontract.taxi);
                 flights.get({flightsID: $scope.newcontract.flightID}, function (data) {
                     $scope.remoteNewContract.flight = data;
-                    Hotels.get({hotelID: $scope.newcontract.hotelID}, function (data) {
-                        $scope.remoteNewHotelContract.hotel = data;
-                        $scope.remoteNewCustomer.email = $scope.newcontract.customer.email;
-                        $scope.remoteNewCustomer.name = $scope.newcontract.customer.name;
-                        $scope.remoteNewCustomer.password = $scope.newcontract.customer.password;
-                        $scope.remoteNewCustomer.personID = $scope.newcontract.customer.personID;
-                        $scope.remoteNewCustomer.phoneNumber = $scope.newcontract.customer.phoneNumber;
-                        Members.save($scope.remoteNewCustomer, function (data) {
-                            console.log(data);
 
-                            $scope.localContract.customer = $scope.newcontract.customer;
-                            $scope.localContract.taxi = $scope.newcontract.taxi;
-                            $scope.localContract.contractDate = $scope.newcontract.contractDate;
-                            console.log($scope.localContract);
-                            console.log($scope.remoteNewContract);
-
-                            Members.get({memberID: 'a', email: $scope.newcontract.customer.email}, function (data) {
-                                $scope.remoteNewContract.member = data;
-                                $scope.remoteNewHotelContract.member = data;
-                                $scope.registercontract();
-                                $scope.registerRemoteContract();
-
-                            });
-                            // mark success on the registration form
-                            $scope.successMessages = [ 'customer Registered' ];
-                        }, function (result) {
-                            if (result.status == 409) {
-
-                                $scope.localContract.customer = $scope.newcontract.customer;
-                                $scope.localContract.taxi = $scope.newcontract.taxi;
-                                $scope.localContract.contractDate = $scope.newcontract.contractDate;
-                                console.log($scope.localContract);
-                                console.log($scope.remoteNewContract);
-                                Members.get({memberID: 'a', email: $scope.newcontract.customer.email}, function (data) {
-                                    $scope.remoteNewContract.member = data;
-                                    $scope.registercontract();
-                                    $scope.registerRemoteContract();
-                                });
-
-
-                            }
-
-
-                        });
-                    });
-
+                    $scope.remoteNewCustomer.email = $scope.newcontract.customer.email;
+                    $scope.remoteNewCustomer.name = $scope.newcontract.customer.name;
+                    $scope.remoteNewCustomer.password = $scope.newcontract.customer.password;
+                    $scope.remoteNewCustomer.personID = $scope.newcontract.customer.personID;
+                    $scope.remoteNewCustomer.phoneNumber = $scope.newcontract.customer.phoneNumber;
 //                    Members.get({memberID: 'check', email: $scope.newcontract.customer.email}, function (data) {
 //
 //
@@ -342,7 +297,6 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 //                        $scope.registercontract();
 //                        $scope.registerRemoteContract();
 //                        $scope.refresh();
-//
 //
 //
 //                    }, function (result) {
@@ -367,37 +321,45 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 //
 //                });
 
+                    Members.save($scope.remoteNewCustomer, function (data) {
+                        console.log(data);
+
+                        $scope.localContract.customer = $scope.newcontract.customer;
+                        $scope.localContract.taxi = $scope.newcontract.taxi;
+                        $scope.localContract.contractDate = $scope.newcontract.contractDate;
+                        console.log($scope.localContract);
+                        console.log($scope.remoteNewContract);
+
+                        Members.get({memberID: 'a', email: $scope.newcontract.customer.email}, function (data) {
+                            $scope.remoteNewContract.member = data;
+                            $scope.registercontract();
+                            $scope.registerRemoteContract();
+                        });
+                        // mark success on the registration form
+                        $scope.successMessages = [ 'customer Registered' ];
+                    }, function (result) {
+                        if (result.state == 409) {
+
+                            $scope.localContract.customer = $scope.newcontract.customer;
+                            $scope.localContract.taxi = $scope.newcontract.taxi;
+                            $scope.localContract.contractDate = $scope.newcontract.contractDate;
+                            console.log($scope.localContract);
+                            console.log($scope.remoteNewContract);
+                            Members.get({memberID: 'a', email: $scope.newcontract.customer.email}, function (data) {
+                                $scope.remoteNewContract.member = data;
+                                $scope.registercontract();
+                                $scope.registerRemoteContract();
+                            });
+
+
+                        }
+
+
+                    });
+
 
                 });
             });
-        });
-    };
-
-    $scope.registerRemoteHotel = function(){
-        $scope.successMessages = '';
-        $scope.errorMessages = '';
-        $scope.errors = {};
-
-
-        HotelBookings.save($scope.remoteNewHotelContract, function (data) {
-            console.log($scope.remoteNewHotelContract);
-            // mark success on the registration form
-            $scope.successMessages = [ 'contract Registered' ];
-
-            // Update the list of members
-            $scope.refresh();
-
-        }, function (result) {
-            if ((result.status == 409) || (result.status == 400)) {
-                $scope.errors = result.data;
-                console.log(result.data);
-                console.log($scope.localContract);
-                $scope.deleteWhenErrorHappen();
-            } else {
-                $scope.errorMessages = [ 'Unknown  server error' ];
-                $scope.deleteWhenErrorHappen();
-            }
-
         });
     };
 
@@ -444,7 +406,6 @@ function ContractCtrl($scope, $http, $resource, Taxis, Customers, contracts, fli
 
             // Update the list of members
             $scope.refresh();
-            $scope.registerRemoteHotel();
 
         }, function (result) {
             if ((result.status == 409) || (result.status == 400)) {

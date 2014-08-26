@@ -53,18 +53,6 @@
 
             </div>
 
-            <div>
-                <label for="hotel">Hotels:</label>
-
-                <select  name = "hotel"  type= "hotel"  id="hotel" ng-model="newcontract.hotelID" placeholder="Your hotel" required>
-
-
-                    <option ng-repeat="hotel in hotels | orderBy:orderBy" value = {{hotel.id}}>{{hotel.hotelName}}{{hotel.hotel_size}}</option>
-
-                </select>
-
-            </div>
-
 
 
             <div >

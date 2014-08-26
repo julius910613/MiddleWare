@@ -51,7 +51,7 @@ angular.module('remoteHotelCustomerService', ['ngResource']).
     });
 angular.module('remoteHotelsQueryService', ['ngResource']).
     factory('Hotels', function($resource){
-        return $resource('http://hotelbooking-130254496.rhcloud.com/rest/hotels/:hotelID', {});
+        return $resource('http://hotelbooking-130254496.rhcloud.com/rest/flights/:flightsID', {});
     });
 
 angular.module('remoteHotelBookingService', ['ngResource']).

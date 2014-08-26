@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="jboss-kitchensink-angularjs:war exploded">
+    <output-path>$PROJECT_DIR$/target/jboss-kitchensink-angularjs</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="jboss-kitchensink-angularjs/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="jboss-kitchensink-angularjs" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA-redhat-2" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
